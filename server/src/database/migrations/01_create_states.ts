@@ -2,8 +2,8 @@ import Knex from 'knex'
 
 export async function up (knex: Knex) {
   return knex.schema.createTable('states', table => {
-    table.decimal('id').primary()
-    table.string('description').notNullable()
+    table.integer('id').primary()
+    table.string('state').notNullable()
   })
 }
 

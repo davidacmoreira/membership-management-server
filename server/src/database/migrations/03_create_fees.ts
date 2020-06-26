@@ -3,10 +3,9 @@ import Knex from 'knex'
 export async function up (knex: Knex) {
   return knex.schema.createTable('fees', table => {
     table.increments('id').primary()
-    table.decimal('year').notNullable()
-    table.decimal('month').notNullable()
+    table.date('date').notNullable()
     table.decimal('value').notNullable()
-    table.decimal('user_id').notNullable()
+    table.integer('user_id').notNullable().references('id').inTable('users')
   })
 }
 
