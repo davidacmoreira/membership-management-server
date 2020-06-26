@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import Knex from 'knex'
 
 export async function up (knex: Knex) {
@@ -7,7 +8,6 @@ export async function up (knex: Knex) {
     table.integer('member_id').notNullable().references('id').inTable('members')
     table.integer('fee_id').notNullable().references('id').inTable('fees')
     table.integer('user_id').notNullable().references('id').inTable('users')
-
   })
 }
 
