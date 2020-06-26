@@ -1,5 +1,5 @@
 import express from 'express'
-import '@config/config.json'
+import { PORT_SERVER } from '@config/config.json'
 
 const app = express()
 
@@ -7,4 +7,4 @@ app.get('/', (request, response) => {
   return response.json({ message: 'Hello World' })
 })
 
-app.listen(3333)
+app.listen(PORT_SERVER)
