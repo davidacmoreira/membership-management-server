@@ -1,5 +1,3 @@
-import path from 'path'
-
 module.exports = {
   client: 'pg',
   connection: {
@@ -9,7 +7,10 @@ module.exports = {
     database: 'adc'
   },
   migrations: {
-    directory: path.resolve(__dirname, 'src', 'database', 'migrations')
+    directory: '../database/migrations'
+  },
+  seeds: {
+    directory: '../database/seeds'
   },
   useNullAsDefault: true
 }
