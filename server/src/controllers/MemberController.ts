@@ -1,9 +1,18 @@
 // eslint-disable-next-line
 import { Request, Response } from 'express'
-// eslint-disable-next-line
-import Knex, { QueryBuilder, QueryInterface } from 'knex'
 
 import knex from '@database/connection'
+
+interface Member {
+  id: number;
+  name: string;
+  address: string;
+  phone: number;
+  email: string;
+  description: string;
+  stateId: number;
+  userId: number;
+}
 
 interface Result {
   id: number;
@@ -19,41 +28,28 @@ class MemberController {
   async index (request: Request, response: Response) {
     const { name, description } = request.query
 
-    const selectColumns = [
-      'members.id',
-      'members.name',
-      'members.address',
-      'members.phone',
-      'members.email',
-      'members.description',
-      'states.state'
-    ]
+    const members: Result[] = await knex<Member>('members')
+      .join('states', 'members.state_id', '=', 'states.id')
+      .select([
+        'members.id',
+        'members.name',
+        'members.address',
+        'members.phone',
+        'members.email',
+        'members.description',
+        'states.state'
+      ])
+      .modify((queryBuilder) => {
+        if (name) {
+          queryBuilder.where('name', 'like', '%' + String(name) + '%')
+        }
 
-    let members: Result[]
+        if (description) {
+          queryBuilder.where('description', 'like', '%' + String(description) + '%')
+        }
 
-    if (name && description) {
-      members = await knex('members')
-        .join('states', 'members.state_id', '=', 'states.id')
-        .where('name', 'like', '%' + String(name) + '%')
-        .where('description', 'like', '%' + String(description) + '%')
-        .select(selectColumns)
-    } else {
-      if (name) {
-        members = await knex('members')
-          .join('states', 'members.state_id', '=', 'states.id')
-          .where('name', 'like', '%' + String(name) + '%')
-          .select(selectColumns)
-      } else if (description) {
-        members = await knex('members')
-          .join('states', 'members.state_id', '=', 'states.id')
-          .where('description', 'like', '%' + String(description) + '%')
-          .select(selectColumns)
-      } else {
-        members = await knex('members')
-          .join('states', 'members.state_id', '=', 'states.id')
-          .select(selectColumns)
-      }
-    }
+        return queryBuilder
+      })
 
     if (members.length) {
       return response.json(members)
