@@ -61,8 +61,6 @@ class MemberController {
   async show (request: Request, response: Response) {
     const { id } = request.params
 
-    console.log(id)
-
     const member: MemberResult = await knex<Member>('members')
       .join('states', 'members.state_id', '=', 'states.id')
       .where('members.id', id)
@@ -75,8 +73,6 @@ class MemberController {
         'members.description',
         'states.state'
       ]).first()
-
-    console.log(member)
 
     if (member) {
       return response.json(member)
