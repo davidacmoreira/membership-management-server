@@ -1,2 +1,4 @@
 server/node_modules
+server/yarn-debug.log*
+server/yarn-error.log*
 server/dist
