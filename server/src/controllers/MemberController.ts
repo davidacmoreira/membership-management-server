@@ -80,6 +80,22 @@ class MemberController {
       return response.status(404).json()
     }
   }
+
+  async create (request: Request, response: Response) {
+    const {
+      name, address, phone, email, description, state
+    } = request.body
+
+    const stateRef = await knex('states')
+      .where('state', state)
+      .select(['id']).first()
+
+    const member = { name, address, phone, email, description, state_id: stateRef.id, user_id: 2 }
+
+    const [id] = await knex('members').insert(member).returning('id')
+
+    return response.json({ id })
+  }
 }
 
 export default MemberController
