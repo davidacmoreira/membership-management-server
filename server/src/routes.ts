@@ -9,5 +9,6 @@ const memberController = new MemberController()
 routes.get('/members', memberController.index)
 routes.get('/members/:id', memberController.show)
 routes.post('/members', memberController.create)
+routes.put('/members/:id', memberController.update)
 
 export default routes

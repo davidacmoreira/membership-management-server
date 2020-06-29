@@ -96,6 +96,23 @@ class MemberController {
 
     return response.json({ id })
   }
+
+  async update (request: Request, response: Response) {
+    const { id } = request.params
+    const { name, address, phone, email, description, state } = request.body
+
+    const stateRef = await knex('states')
+      .where('state', state)
+      .select(['id']).first()
+
+    const member = { name, address, phone, email, description, state_id: stateRef.id, user_id: 2 }
+
+    await knex('members')
+      .update(member)
+      .where('id', id)
+
+    return response.json({ id })
+  }
 }
 
 export default MemberController
