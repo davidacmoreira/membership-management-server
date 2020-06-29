@@ -7,7 +7,18 @@ const routes = express.Router()
 
 const memberController = new MemberController()
 
-routes.get('/members', memberController.index)
+routes.get('/members',
+  celebrate({
+    query: Joi.object().keys({
+      name: Joi.string(),
+      description: Joi.string()
+    })
+  }, {
+    abortEarly: false
+  }),
+  memberController.index
+)
+
 routes.get('/members/:id',
   celebrate({
     params: Joi.object().keys({
@@ -18,6 +29,7 @@ routes.get('/members/:id',
   }),
   memberController.show
 )
+
 routes.post('/members',
   celebrate({
     body: Joi.object().keys({
@@ -33,6 +45,7 @@ routes.post('/members',
   }),
   memberController.create
 )
+
 routes.put('/members/:id',
   celebrate({
     params: Joi.object().keys({
