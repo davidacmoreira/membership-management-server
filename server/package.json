@@ -9,8 +9,7 @@
     "start": "node dist/server.js",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpileOnly --ignore-watch --no-notify src/server.ts",
     "test": "jest",
-    "knex:migrate": "npx knex --knexfile knexfile.ts migrate:latest",
-    "knex:seed": "npx knex --knexfile knexfile.ts seed:run"
+    "knex:migrate": "npx knex --knexfile knexfile.ts migrate:latest"
   },
   "dependencies": {
     "express": "^4.17.1",

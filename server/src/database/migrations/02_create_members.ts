@@ -5,11 +5,11 @@ export async function up (knex: Knex) {
   return knex.schema.createTable('members', table => {
     table.increments('id').primary()
     table.string('name').notNullable()
-    table.string('address').notNullable()
-    table.bigInteger('phone').notNullable()
-    table.string('email').notNullable()
-    table.string('description').notNullable()
-    table.integer('state_id').notNullable().references('id').inTable('states')
+    table.string('address')
+    table.bigInteger('phone')
+    table.string('email')
+    table.string('description')
+    table.string('state').notNullable()
     table.integer('user_id').notNullable().references('id').inTable('users')
   })
 }

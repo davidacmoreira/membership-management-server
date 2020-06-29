@@ -3,33 +3,11 @@ import { Request, Response } from 'express'
 
 import knex from '@database/connection'
 
-interface Member {
-  id: number;
-  name: string;
-  address: string;
-  phone: number;
-  email: string;
-  description: string;
-  stateId: number;
-  userId: number;
-}
-
-interface MemberResult {
-  id: number;
-  name: string;
-  address: string;
-  phone: number;
-  email: string;
-  description: string;
-  state: string;
-}
-
 class MemberController {
   async index (request: Request, response: Response) {
     const { name, description } = request.query
 
-    const members: MemberResult[] = await knex<Member>('members')
-      .join('states', 'members.state_id', '=', 'states.id')
+    const members = await knex('members')
       .select([
         'members.id',
         'members.name',
@@ -37,7 +15,7 @@ class MemberController {
         'members.phone',
         'members.email',
         'members.description',
-        'states.state'
+        'members.state'
       ])
       .modify((queryBuilder) => {
         if (name) {
@@ -61,8 +39,7 @@ class MemberController {
   async show (request: Request, response: Response) {
     const { id } = request.params
 
-    const member: MemberResult = await knex<Member>('members')
-      .join('states', 'members.state_id', '=', 'states.id')
+    const member = await knex('members')
       .where('members.id', id)
       .select([
         'members.id',
@@ -71,7 +48,7 @@ class MemberController {
         'members.phone',
         'members.email',
         'members.description',
-        'states.state'
+        'members.state'
       ]).first()
 
     if (member) {
@@ -86,11 +63,7 @@ class MemberController {
       name, address, phone, email, description, state
     } = request.body
 
-    const stateRef = await knex('states')
-      .where('state', state)
-      .select(['id']).first()
-
-    const member = { name, address, phone, email, description, state_id: stateRef.id, user_id: 2 }
+    const member = { name, address, phone, email, description, state, user_id: 2 }
 
     const [id] = await knex('members').insert(member).returning('id')
 
@@ -101,11 +74,7 @@ class MemberController {
     const { id } = request.params
     const { name, address, phone, email, description, state } = request.body
 
-    const stateRef = await knex('states')
-      .where('state', state)
-      .select(['id']).first()
-
-    const member = { name, address, phone, email, description, state_id: stateRef.id, user_id: 2 }
+    const member = { name, address, phone, email, description, state, user_id: 2 }
 
     await knex('members')
       .update(member)
