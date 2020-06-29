@@ -24,6 +24,20 @@ routes.post('/members',
   }),
   memberController.create
 )
-routes.put('/members/:id', memberController.update)
+routes.put('/members/:id',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string(),
+      address: Joi.string(),
+      phone: Joi.number(),
+      email: Joi.string().email(),
+      description: Joi.string(),
+      state: Joi.string()
+    })
+  }, {
+    abortEarly: false
+  }),
+  memberController.update
+)
 
 export default routes
