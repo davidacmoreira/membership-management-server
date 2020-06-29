@@ -3,11 +3,23 @@ import { Request, Response } from 'express'
 
 import knex from '@database/connection'
 
+interface Member {
+  id: number
+  name: string
+  address: string
+  phone: number
+  email: string
+  description: string
+  state: string
+  // eslint-disable-next-line
+  user_id: number
+}
+
 class MemberController {
   async index (request: Request, response: Response) {
     const { name, description } = request.query
 
-    const members = await knex('members')
+    const members: Member[] = await knex('members')
       .select([
         'members.id',
         'members.name',
@@ -15,7 +27,8 @@ class MemberController {
         'members.phone',
         'members.email',
         'members.description',
-        'members.state'
+        'members.state',
+        'members.user_id'
       ])
       .modify((queryBuilder) => {
         if (name) {
@@ -39,7 +52,7 @@ class MemberController {
   async show (request: Request, response: Response) {
     const { id } = request.params
 
-    const member = await knex('members')
+    const member: Member = await knex('members')
       .where('members.id', id)
       .select([
         'members.id',
@@ -48,7 +61,8 @@ class MemberController {
         'members.phone',
         'members.email',
         'members.description',
-        'members.state'
+        'members.state',
+        'members.user_id'
       ]).first()
 
     if (member) {
@@ -59,11 +73,14 @@ class MemberController {
   }
 
   async create (request: Request, response: Response) {
+    // eslint-disable-next-line
+    const user_id = request.headers.authorization
+
     const {
       name, address, phone, email, description, state
     } = request.body
 
-    const member = { name, address, phone, email, description, state, user_id: 2 }
+    const member = { name, address, phone, email, description, state, user_id }
 
     const [id] = await knex('members').insert(member).returning('id')
 
@@ -71,16 +88,35 @@ class MemberController {
   }
 
   async update (request: Request, response: Response) {
+    const userId = request.headers.authorization
     const { id } = request.params
     const { name, address, phone, email, description, state } = request.body
 
-    const member = { name, address, phone, email, description, state, user_id: 2 }
-
-    await knex('members')
-      .update(member)
+    const member: Member = await knex('members')
       .where('id', id)
+      .select('*')
+      .first()
 
-    return response.json({ id })
+    if (member) {
+      const data: Member = {
+        id: Number(id),
+        name: name || member.name,
+        address: address || member.address,
+        phone: Number(phone) || member.phone,
+        email: email || member.email,
+        description: description || member.description,
+        state: state || member.state,
+        user_id: Number(userId)
+      }
+
+      await knex('members')
+        .update(data)
+        .where('id', data.id)
+
+      return response.json({ id })
+    } else {
+      return response.status(404).json()
+    }
   }
 }
 
