@@ -20,7 +20,7 @@ describe('Members', () => {
         name: 'Joe',
         address: 'Paris',
         phone: 1234567890,
-        email: 'joe@mail.test',
+        email: 'joe@mail.com',
         description: 'Special One',
         state: 'active'
       })
