@@ -1,12 +1,14 @@
+import { HOST, USER, PASSWORD, DATABASE } from './src/config/config'
+
 export = {
 
   development: {
     client: 'pg',
     connection: {
-      host: '127.0.0.1',
-      user: 'postgres',
-      password: 'postgres',
-      database: 'adc'
+      host: HOST,
+      user: USER,
+      password: PASSWORD,
+      database: DATABASE
     },
     migrations: {
       directory: './src/database/migrations'

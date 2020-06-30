@@ -3,3 +3,5 @@ server/yarn-debug.log*
 server/yarn-error.log*
 server/dist
 server/src/database/*.sqlite
+
+*.env*
