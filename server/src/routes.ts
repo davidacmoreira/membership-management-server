@@ -32,6 +32,9 @@ routes.get('/members/:id',
 
 routes.post('/members',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.number().required()
+    }).unknown(),
     body: Joi.object().keys({
       name: Joi.string().required(),
       address: Joi.string(),
@@ -48,6 +51,9 @@ routes.post('/members',
 
 routes.put('/members/:id',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.number().required()
+    }).unknown(),
     params: Joi.object().keys({
       id: Joi.number()
     }),
