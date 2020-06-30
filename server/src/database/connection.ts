@@ -1,13 +1,9 @@
 import knex from 'knex'
 
-const connection = knex({
-  client: 'pg',
-  connection: {
-    host: '127.0.0.1',
-    user: 'postgres',
-    password: 'postgres',
-    database: 'adc'
-  }
-})
+const configuration = require('../../knexfile')
+
+const config = process.env.NODE_ENV === 'test' ? configuration.test : configuration.development
+
+const connection = knex(config)
 
 export default connection
