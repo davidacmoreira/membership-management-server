@@ -1,11 +1,56 @@
 import express from 'express'
 import { celebrate, Joi } from 'celebrate'
 
+import UserController from '@controllers/UserController'
 import MemberController from '@controllers/MemberController'
 
 const routes = express.Router()
 
+const userController = new UserController()
 const memberController = new MemberController()
+
+routes.get('/users',
+  celebrate({
+    headers: Joi.object({
+      authorization: Joi.number().required()
+    }).unknown(),
+    query: Joi.object().keys({
+      username: Joi.string()
+    })
+  }, {
+    abortEarly: false
+  }),
+  userController.index
+)
+
+routes.get('/users/:id',
+  celebrate({
+    headers: Joi.object({
+      authorization: Joi.number().required()
+    }).unknown(),
+    params: Joi.object().keys({
+      id: Joi.number()
+    })
+  }, {
+    abortEarly: false
+  }),
+  userController.show
+)
+
+routes.post('/users',
+  celebrate({
+    headers: Joi.object({
+      authorization: Joi.number().required()
+    }).unknown(),
+    body: Joi.object().keys({
+      username: Joi.string().required(),
+      password: Joi.string().required()
+    })
+  }, {
+    abortEarly: false
+  }),
+  userController.create
+)
 
 routes.get('/members',
   celebrate({
