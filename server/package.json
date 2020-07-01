@@ -7,10 +7,11 @@
   "scripts": {
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "start": "node dist/server.js",
-    "dev": "ts-node-dev -r dotenv/config -r tsconfig-paths/register --respawn --transpileOnly --ignore-watch --no-notify src/server.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpileOnly --ignore-watch --no-notify src/server.ts",
     "pretest": "cross-env NODE_ENV=test npx knex --knexfile knexfile.ts migrate:rollback --all && cross-env NODE_ENV=test npx knex --knexfile knexfile.ts migrate:latest",
     "test": "cross-env NODE_ENV=test jest --testTimeout=5000",
-    "knex:migrate": "npx knex --knexfile knexfile.ts migrate:latest"
+    "knex:migrate": "npx knex --knexfile knexfile.ts migrate:latest",
+    "knex:rollback": "npx knex --knexfile knexfile.ts migrate:rollback --all"
   },
   "dependencies": {
     "celebrate": "^12.1.1",

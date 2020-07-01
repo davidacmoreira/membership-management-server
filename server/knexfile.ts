@@ -1,15 +1,10 @@
-import { HOST, USER, PASSWORD, DATABASE } from './src/config/config'
+import { PG_URL } from './src/config/config'
 
 export = {
 
   development: {
     client: 'pg',
-    connection: {
-      host: HOST,
-      user: USER,
-      password: PASSWORD,
-      database: DATABASE
-    },
+    connection: PG_URL,
     migrations: {
       directory: './src/database/migrations'
     },
