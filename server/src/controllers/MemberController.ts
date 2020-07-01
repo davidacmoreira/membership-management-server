@@ -20,16 +20,7 @@ class MemberController {
     const { name, description } = request.query
 
     const members: Member[] = await knex('members')
-      .select([
-        'members.id',
-        'members.name',
-        'members.address',
-        'members.phone',
-        'members.email',
-        'members.description',
-        'members.state',
-        'members.user_id'
-      ])
+      .select('*')
       .modify((queryBuilder) => {
         if (name) {
           queryBuilder.where('name', 'like', '%' + String(name) + '%')
@@ -53,17 +44,8 @@ class MemberController {
     const { id } = request.params
 
     const member: Member = await knex('members')
-      .where('members.id', id)
-      .select([
-        'members.id',
-        'members.name',
-        'members.address',
-        'members.phone',
-        'members.email',
-        'members.description',
-        'members.state',
-        'members.user_id'
-      ]).first()
+      .where('id', id)
+      .select('*').first()
 
     if (member) {
       return response.json(member)
