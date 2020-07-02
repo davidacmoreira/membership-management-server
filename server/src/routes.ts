@@ -2,11 +2,13 @@ import express from 'express'
 import { celebrate, Joi } from 'celebrate'
 
 import UserController from '@controllers/UserController'
+import AuthenticationController from '@controllers/AuthenticationController'
 import MemberController from '@controllers/MemberController'
 
 const routes = express.Router()
 
 const userController = new UserController()
+const autheticationController = new AuthenticationController()
 const memberController = new MemberController()
 
 routes.get('/users',
@@ -50,6 +52,18 @@ routes.post('/users',
     abortEarly: false
   }),
   userController.create
+)
+
+routes.post('/users/signin',
+  celebrate({
+    body: Joi.object().keys({
+      username: Joi.string().required(),
+      password: Joi.string().required()
+    })
+  }, {
+    abortEarly: false
+  }),
+  autheticationController.signin
 )
 
 routes.get('/members',

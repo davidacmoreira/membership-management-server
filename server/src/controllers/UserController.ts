@@ -7,7 +7,6 @@ import knex from '@database/connection'
 interface User {
   id: number
   username: string
-  password: string
 }
 
 const createHash = async (password: string) => {
@@ -61,7 +60,11 @@ class UserController {
 
     delete request.body.password
 
-    const user = { username: request.body.username, password: hash }
+    const user = {
+      username: request.body.username,
+      password: hash,
+      token: ''
+    }
 
     const [id] = await knex('users').insert(user).returning('id')
 
