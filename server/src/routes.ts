@@ -4,12 +4,14 @@ import { celebrate, Joi } from 'celebrate'
 import UserController from '@controllers/UserController'
 import AuthenticationController from '@controllers/AuthenticationController'
 import MemberController from '@controllers/MemberController'
+import FeeController from '@controllers/FeeController'
 
 const routes = express.Router()
 
 const userController = new UserController()
 const autheticationController = new AuthenticationController()
 const memberController = new MemberController()
+const feeController = new FeeController()
 
 routes.get('/users',
   celebrate({
@@ -19,9 +21,7 @@ routes.get('/users',
     query: Joi.object().keys({
       username: Joi.string()
     })
-  }, {
-    abortEarly: false
-  }),
+  }, { abortEarly: false }),
   userController.index
 )
 
@@ -33,9 +33,7 @@ routes.get('/users/:id',
     params: Joi.object().keys({
       id: Joi.number()
     })
-  }, {
-    abortEarly: false
-  }),
+  }, { abortEarly: false }),
   userController.show
 )
 
@@ -48,9 +46,7 @@ routes.post('/users',
       username: Joi.string().required(),
       password: Joi.string().required()
     })
-  }, {
-    abortEarly: false
-  }),
+  }, { abortEarly: false }),
   userController.create
 )
 
@@ -60,9 +56,7 @@ routes.post('/users/signin',
       username: Joi.string().required(),
       password: Joi.string().required()
     })
-  }, {
-    abortEarly: false
-  }),
+  }, { abortEarly: false }),
   autheticationController.signin
 )
 
@@ -72,9 +66,7 @@ routes.get('/members',
       name: Joi.string(),
       description: Joi.string()
     })
-  }, {
-    abortEarly: false
-  }),
+  }, { abortEarly: false }),
   memberController.index
 )
 
@@ -83,9 +75,7 @@ routes.get('/members/:id',
     params: Joi.object().keys({
       id: Joi.number()
     })
-  }, {
-    abortEarly: false
-  }),
+  }, { abortEarly: false }),
   memberController.show
 )
 
@@ -102,9 +92,7 @@ routes.post('/members',
       description: Joi.string(),
       state: Joi.string().required()
     })
-  }, {
-    abortEarly: false
-  }),
+  }, { abortEarly: false }),
   memberController.create
 )
 
@@ -124,10 +112,49 @@ routes.put('/members/:id',
       description: Joi.string(),
       state: Joi.string()
     })
-  }, {
-    abortEarly: false
-  }),
+  }, { abortEarly: false }),
   memberController.update
+)
+
+routes.get('/fees',
+  celebrate({
+    query: Joi.object().keys({
+      date: Joi.date()
+    })
+  }, { abortEarly: false }),
+  feeController.index
+)
+
+routes.get('/fees/:id',
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.number()
+    })
+  }, { abortEarly: false }),
+  feeController.show
+)
+
+routes.post('/fees',
+  celebrate({
+    body: Joi.object().keys({
+      date: Joi.date().required(),
+      value: Joi.number().required()
+    })
+  }, { abortEarly: false }),
+  feeController.create
+)
+
+routes.put('/fees/:id',
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.number()
+    }),
+    body: Joi.object().keys({
+      date: Joi.date(),
+      value: Joi.number()
+    })
+  }, { abortEarly: false }),
+  feeController.update
 )
 
 export default routes
