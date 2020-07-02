@@ -60,15 +60,26 @@ class UserController {
 
     delete request.body.password
 
-    const user = {
-      username: request.body.username,
-      password: hash,
-      token: ''
+    const userExists = await knex('users')
+      .where('username', request.body.username)
+      .select(['id'])
+      .first()
+
+    if (userExists) {
+      return response.status(400).json({ message: 'user already exists' })
+    } else {
+      const user = {
+        username: request.body.username,
+        password: hash,
+        token: ''
+      }
+
+      const [id] = await knex('users')
+        .insert(user)
+        .returning('id')
+
+      return response.status(201).json({ id })
     }
-
-    const [id] = await knex('users').insert(user).returning('id')
-
-    return response.status(201).json({ id })
   }
 }
 
