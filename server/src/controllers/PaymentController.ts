@@ -26,7 +26,7 @@ class PaymentController {
         }
 
         if (member_id) {
-          queryBuilder.where('member_id', '=', member_id)
+          queryBuilder.where('member_id', '=', Number(member_id))
         }
 
         return queryBuilder
