@@ -2,7 +2,6 @@ import express from 'express'
 import { celebrate, Joi } from 'celebrate'
 
 import UserController from '@controllers/UserController'
-import AuthenticationController from '@controllers/AuthenticationController'
 import MemberController from '@controllers/MemberController'
 import FeeController from '@controllers/FeeController'
 import PaymentController from '@controllers/PaymentController'
@@ -10,7 +9,6 @@ import PaymentController from '@controllers/PaymentController'
 const routes = express.Router()
 
 const userController = new UserController()
-const autheticationController = new AuthenticationController()
 const memberController = new MemberController()
 const feeController = new FeeController()
 const paymentController = new PaymentController()
@@ -59,7 +57,7 @@ routes.post('/users/signin',
       password: Joi.string().required()
     })
   }, { abortEarly: false }),
-  autheticationController.signin
+  userController.signin
 )
 
 routes.get('/members',
