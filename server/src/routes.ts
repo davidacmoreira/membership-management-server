@@ -5,6 +5,7 @@ import UserController from '@controllers/UserController'
 import AuthenticationController from '@controllers/AuthenticationController'
 import MemberController from '@controllers/MemberController'
 import FeeController from '@controllers/FeeController'
+import PaymentController from '@controllers/PaymentController'
 
 const routes = express.Router()
 
@@ -12,6 +13,7 @@ const userController = new UserController()
 const autheticationController = new AuthenticationController()
 const memberController = new MemberController()
 const feeController = new FeeController()
+const paymentController = new PaymentController()
 
 routes.get('/users',
   celebrate({
@@ -155,6 +157,49 @@ routes.put('/fees/:id',
     })
   }, { abortEarly: false }),
   feeController.update
+)
+
+routes.get('/payments',
+  celebrate({
+    query: Joi.object().keys({
+      date: Joi.date(),
+      member_id: Joi.number()
+    })
+  }, { abortEarly: false }),
+  paymentController.index
+)
+
+routes.get('/payments/:id',
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.number()
+    })
+  }, { abortEarly: false }),
+  paymentController.show
+)
+
+routes.post('/payments',
+  celebrate({
+    body: Joi.object().keys({
+      date: Joi.date().required(),
+      member_id: Joi.number().required(),
+      fee_id: Joi.number().required()
+    })
+  }, { abortEarly: false }),
+  paymentController.create
+)
+
+routes.put('/payments/:id',
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.number()
+    }),
+    body: Joi.object().keys({
+      date: Joi.date(),
+      fee_id: Joi.number()
+    })
+  }, { abortEarly: false }),
+  paymentController.update
 )
 
 export default routes
