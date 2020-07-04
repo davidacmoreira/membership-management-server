@@ -1,3 +1,4 @@
 import app from './app'
+import { PORT } from './config/config'
 
-app.listen(process.env.PORT)
+app.listen(PORT)
