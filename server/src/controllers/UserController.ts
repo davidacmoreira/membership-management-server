@@ -32,67 +32,85 @@ const checkPassword = async (password: string, hash: string) => {
 
 class UserController {
   async index (request: Request, response: Response) {
-    const { username } = request.query
+    const userId = Number(request.headers.user_id)
+    console.log('users - create: ' + userId)
 
-    const users: User[] = await knex('users')
-      .select(['id', 'username'])
-      .modify((queryBuilder) => {
-        if (username) {
-          queryBuilder.where('username', 'like', '%' + String(username) + '%')
-        }
+    if (userId === 1) {
+      const { username } = request.query
 
-        return queryBuilder
-      })
+      const users: User[] = await knex('users')
+        .select(['id', 'username'])
+        .modify((queryBuilder) => {
+          if (username) {
+            queryBuilder.where('username', 'like', '%' + String(username) + '%')
+          }
 
-    if (users.length) {
-      return response.json(users)
+          return queryBuilder
+        })
+
+      if (users.length) {
+        return response.json(users)
+      } else {
+        return response.status(204).json()
+      }
     } else {
-      return response.status(204).json()
+      return response.status(400).json({ message: 'no permission' })
     }
   }
 
   async show (request: Request, response: Response) {
-    const { id } = request.params
+    const userId = Number(request.headers.user_id)
+    console.log('users - create: ' + userId)
 
-    const user: User = await knex('users')
-      .where('id', id)
-      .select(['id', 'username'])
-      .first()
+    if (userId === 1) {
+      const { id } = request.params
 
-    if (user) {
-      return response.json(user)
+      const user: User = await knex('users')
+        .where('id', id)
+        .select(['id', 'username'])
+        .first()
+
+      if (user) {
+        return response.json(user)
+      } else {
+        return response.status(404).json()
+      }
     } else {
-      return response.status(404).json()
+      return response.status(400).json({ message: 'no permission' })
     }
   }
 
   async create (request: Request, response: Response) {
-    // eslint-disable-next-line
-    const user_id = request.headers.authorization
+    const userId = Number(request.headers.user_id)
+    console.log('users - create: ' + userId)
 
-    const hash = await createHash(request.body.password)
+    if (userId === 1) {
+      const hash = await createHash(request.body.password)
 
-    delete request.body.password
+      delete request.body.password
 
-    const userExists = await knex('users')
-      .where('username', request.body.username)
-      .select(['id'])
-      .first()
+      const userExists = await knex('users')
+        .where('username', request.body.username)
+        .select(['id'])
+        .first()
 
-    if (userExists) {
-      return response.status(400).json({ message: 'user already exists' })
-    } else {
-      const user = {
-        username: request.body.username,
-        password: hash,
-        token: ''
+      if (userExists) {
+        return response.status(400).json({ message: 'user already exists' })
+      } else {
+        const user = {
+          username: request.body.username,
+          password: hash,
+          token: ''
+        }
+
+        const [id] = await knex('users')
+          .insert(user)
+          .returning('id')
+
+        return response.status(201).json({ id })
       }
-
-      const [id] = await knex('users')
-        .insert(user)
-        .returning('id')
-
-      return response.status(201).json({ id })
+    } else {
+      return response.status(400).json({ message: 'no permission' })
     }
   }
 
