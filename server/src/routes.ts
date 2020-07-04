@@ -1,12 +1,16 @@
 import express from 'express'
 import { celebrate, Joi } from 'celebrate'
 
+import middlewareAuth from './middleware/auth'
+
 import UserController from '@controllers/UserController'
 import MemberController from '@controllers/MemberController'
 import FeeController from '@controllers/FeeController'
 import PaymentController from '@controllers/PaymentController'
 
 const routes = express.Router()
+
+routes.use(middlewareAuth)
 
 const userController = new UserController()
 const memberController = new MemberController()
@@ -16,7 +20,7 @@ const paymentController = new PaymentController()
 routes.get('/users',
   celebrate({
     headers: Joi.object({
-      authorization: Joi.number().required()
+      authorization: Joi.string().required()
     }).unknown(),
     query: Joi.object().keys({
       username: Joi.string()
@@ -28,7 +32,7 @@ routes.get('/users',
 routes.get('/users/:id',
   celebrate({
     headers: Joi.object({
-      authorization: Joi.number().required()
+      authorization: Joi.string().required()
     }).unknown(),
     params: Joi.object().keys({
       id: Joi.number()
@@ -40,7 +44,7 @@ routes.get('/users/:id',
 routes.post('/users',
   celebrate({
     headers: Joi.object({
-      authorization: Joi.number().required()
+      authorization: Joi.string().required()
     }).unknown(),
     body: Joi.object().keys({
       username: Joi.string().required(),
@@ -50,18 +54,11 @@ routes.post('/users',
   userController.create
 )
 
-routes.post('/users/signin',
-  celebrate({
-    body: Joi.object().keys({
-      username: Joi.string().required(),
-      password: Joi.string().required()
-    })
-  }, { abortEarly: false }),
-  userController.signin
-)
-
 routes.get('/members',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     query: Joi.object().keys({
       name: Joi.string(),
       description: Joi.string()
@@ -72,6 +69,9 @@ routes.get('/members',
 
 routes.get('/members/:id',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     params: Joi.object().keys({
       id: Joi.number()
     })
@@ -82,7 +82,7 @@ routes.get('/members/:id',
 routes.post('/members',
   celebrate({
     headers: Joi.object({
-      authorization: Joi.number().required()
+      authorization: Joi.string().required()
     }).unknown(),
     body: Joi.object().keys({
       name: Joi.string().required(),
@@ -99,7 +99,7 @@ routes.post('/members',
 routes.put('/members/:id',
   celebrate({
     headers: Joi.object({
-      authorization: Joi.number().required()
+      authorization: Joi.string().required()
     }).unknown(),
     params: Joi.object().keys({
       id: Joi.number()
@@ -118,6 +118,9 @@ routes.put('/members/:id',
 
 routes.get('/fees',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     query: Joi.object().keys({
       date: Joi.date()
     })
@@ -127,6 +130,9 @@ routes.get('/fees',
 
 routes.get('/fees/:id',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     params: Joi.object().keys({
       id: Joi.number()
     })
@@ -136,6 +142,9 @@ routes.get('/fees/:id',
 
 routes.post('/fees',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     body: Joi.object().keys({
       date: Joi.date().required(),
       value: Joi.number().required()
@@ -146,6 +155,9 @@ routes.post('/fees',
 
 routes.put('/fees/:id',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     params: Joi.object().keys({
       id: Joi.number()
     }),
@@ -159,6 +171,9 @@ routes.put('/fees/:id',
 
 routes.get('/payments',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     query: Joi.object().keys({
       date: Joi.date(),
       member_id: Joi.number()
@@ -169,6 +184,9 @@ routes.get('/payments',
 
 routes.get('/payments/:id',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     params: Joi.object().keys({
       id: Joi.number()
     })
@@ -178,6 +196,9 @@ routes.get('/payments/:id',
 
 routes.post('/payments',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     body: Joi.object().keys({
       date: Joi.date().required(),
       member_id: Joi.number().required(),
@@ -189,6 +210,9 @@ routes.post('/payments',
 
 routes.put('/payments/:id',
   celebrate({
+    headers: Joi.object({
+      authorization: Joi.string().required()
+    }).unknown(),
     params: Joi.object().keys({
       id: Joi.number()
     }),
