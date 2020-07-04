@@ -33,7 +33,6 @@ const checkPassword = async (password: string, hash: string) => {
 class UserController {
   async index (request: Request, response: Response) {
     const userId = Number(request.headers.user_id)
-    console.log('users - create: ' + userId)
 
     if (userId === 1) {
       const { username } = request.query
@@ -60,7 +59,6 @@ class UserController {
 
   async show (request: Request, response: Response) {
     const userId = Number(request.headers.user_id)
-    console.log('users - create: ' + userId)
 
     if (userId === 1) {
       const { id } = request.params
@@ -82,7 +80,6 @@ class UserController {
 
   async create (request: Request, response: Response) {
     const userId = Number(request.headers.user_id)
-    console.log('users - create: ' + userId)
 
     if (userId === 1) {
       const hash = await createHash(request.body.password)

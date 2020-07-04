@@ -16,7 +16,8 @@ interface Payment {
 
 class PaymentController {
   async index (request: Request, response: Response) {
-    const { date, member_id } = request.query
+    const date = request.query.date
+    const memberId = Number(request.query.member_id)
 
     const payments: Payment[] = await knex('payments')
       .select('*')
@@ -25,8 +26,8 @@ class PaymentController {
           queryBuilder.where('date', '=', date.toLocaleString())
         }
 
-        if (member_id) {
-          queryBuilder.where('member_id', '=', Number(member_id))
+        if (memberId) {
+          queryBuilder.where('member_id', '=', Number(memberId))
         }
 
         return queryBuilder
@@ -50,7 +51,7 @@ class PaymentController {
   }
 
   async show (request: Request, response: Response) {
-    const { id } = request.params
+    const id = Number(request.params.id)
 
     const payment: Payment = await knex('payments')
       .where('id', id)
@@ -73,13 +74,14 @@ class PaymentController {
   }
 
   async create (request: Request, response: Response) {
-    const {
-      date, member_id, fee_id
-    } = request.body
+    const userId = Number(request.headers.user_id)
+    const date = request.body.date
+    const memberId = Number(request.body.member_id)
+    const feeId = Number(request.body.fee_id)
 
     const payment: Payment = await knex('payments')
-      .where('member_id', '=', member_id)
-      .where('fee_id', '=', fee_id)
+      .where('member_id', '=', memberId)
+      .where('fee_id', '=', feeId)
       .select('*')
       .first()
 
@@ -89,9 +91,9 @@ class PaymentController {
       const [id] = await knex('payments')
         .insert({
           date,
-          member_id,
-          fee_id,
-          user_id: 1
+          member_id: memberId,
+          fee_id: feeId,
+          user_id: userId
         })
         .returning('id')
 
@@ -100,8 +102,10 @@ class PaymentController {
   }
 
   async update (request: Request, response: Response) {
-    const { id } = request.params
-    const { date, fee_id } = request.body
+    const userId = Number(request.headers.user_id)
+    const id = Number(request.params.id)
+    const date = request.body.date
+    const feeId = Number(request.body.fee_id)
 
     const payment: Payment = await knex('payments')
       .where('id', id)
@@ -110,11 +114,11 @@ class PaymentController {
 
     if (payment) {
       const data: Payment = {
-        id: Number(id),
+        id: id,
         date: date || payment.date,
         member_id: payment.member_id,
-        fee_id: Number(fee_id) || payment.fee_id,
-        user_id: 2
+        fee_id: feeId || payment.fee_id,
+        user_id: userId
       }
 
       await knex('payments')

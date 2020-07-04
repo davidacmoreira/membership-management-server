@@ -65,7 +65,6 @@ class FeeController {
 
   async create (request: Request, response: Response) {
     const userId = Number(request.headers.user_id)
-    console.log('users - create: ' + userId)
 
     if (userId === 1) {
       const {
@@ -84,7 +83,7 @@ class FeeController {
           .insert({
             date,
             value,
-            user_id: 1
+            user_id: userId
           })
           .returning('id')
 
@@ -97,7 +96,6 @@ class FeeController {
 
   async update (request: Request, response: Response) {
     const userId = Number(request.headers.user_id)
-    console.log('users - create: ' + userId)
 
     if (userId === 1) {
       const { id } = request.params
@@ -113,7 +111,7 @@ class FeeController {
           id: Number(id),
           date: date || fee.date,
           value: Number(value) || fee.value,
-          user_id: 2
+          user_id: userId
         }
 
         await knex('fees')

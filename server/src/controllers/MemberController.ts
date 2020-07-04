@@ -55,14 +55,13 @@ class MemberController {
   }
 
   async create (request: Request, response: Response) {
-    // eslint-disable-next-line
-    const user_id = request.headers.authorization
+    const userId = Number(request.headers.user_id)
 
     const {
       name, address, phone, email, description, state
     } = request.body
 
-    const member = { name, address, phone, email, description, state, user_id }
+    const member = { name, address, phone, email, description, state, user_id: userId }
 
     const [id] = await knex('members').insert(member).returning('id')
 
@@ -70,7 +69,7 @@ class MemberController {
   }
 
   async update (request: Request, response: Response) {
-    const userId = request.headers.authorization
+    const userId = Number(request.headers.user_id)
     const { id } = request.params
     const { name, address, phone, email, description, state } = request.body
 
@@ -88,7 +87,7 @@ class MemberController {
         email: email || member.email,
         description: description || member.description,
         state: state || member.state,
-        user_id: Number(userId)
+        user_id: userId
       }
 
       await knex('members')
