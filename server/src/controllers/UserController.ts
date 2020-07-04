@@ -1,8 +1,9 @@
 // eslint-disable-next-line
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
-import crypto from 'crypto'
+import jwt from 'jsonwebtoken'
 
+import { SECRET } from '../config/config'
 import knex from '@database/connection'
 
 interface User {
@@ -17,8 +18,8 @@ const createHash = async (password: string) => {
   return hash
 }
 
-const createToken = () => {
-  const token = crypto.randomBytes(16).toString('base64')
+const createToken = (userId: number) => {
+  const token = jwt.sign({ id: userId }, SECRET, { expiresIn: 86400 })
 
   return token
 }
@@ -108,11 +109,11 @@ class UserController {
       delete user.password
 
       if (validPassword) {
-        const token = createToken()
+        const token = createToken(Number(user.id))
 
         await knex('users')
           .update({ token })
-          .where('id', user.id)
+          .where('id', Number(user.id))
 
         return response.status(200).json({ token })
       }
