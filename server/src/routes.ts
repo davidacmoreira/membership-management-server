@@ -2,6 +2,7 @@ import express from 'express'
 import { celebrate, Joi } from 'celebrate'
 
 import middlewareAuth from './middleware/auth'
+import middlewareRole from './middleware/role'
 
 import AuthController from '@controllers/AuthController'
 import UserController from '@controllers/UserController'
@@ -36,7 +37,7 @@ routes.get('/users',
       username: Joi.string()
     })
   }, { abortEarly: false }),
-  [middlewareAuth],
+  [middlewareAuth, middlewareRole],
   userController.index
 )
 
@@ -49,7 +50,7 @@ routes.get('/users/:id',
       id: Joi.number()
     })
   }, { abortEarly: false }),
-  [middlewareAuth],
+  [middlewareAuth, middlewareRole],
   userController.show
 )
 
@@ -63,7 +64,7 @@ routes.post('/users',
       password: Joi.string().required()
     })
   }, { abortEarly: false }),
-  [middlewareAuth],
+  [middlewareAuth, middlewareRole],
   userController.create
 )
 
@@ -168,7 +169,7 @@ routes.post('/fees',
       value: Joi.number().required()
     })
   }, { abortEarly: false }),
-  [middlewareAuth],
+  [middlewareAuth, middlewareRole],
   feeController.create
 )
 
@@ -185,7 +186,7 @@ routes.put('/fees/:id',
       value: Joi.number()
     })
   }, { abortEarly: false }),
-  [middlewareAuth],
+  [middlewareAuth, middlewareRole],
   feeController.update
 )
 

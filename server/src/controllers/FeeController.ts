@@ -66,64 +66,56 @@ class FeeController {
   async create (request: Request, response: Response) {
     const userId = Number(request.headers.user_id)
 
-    if (userId === 1) {
-      const {
-        date, value
-      } = request.body
+    const {
+      date, value
+    } = request.body
 
-      const fee: Fee = await knex('fees')
-        .where('date', '=', date.toLocaleString())
-        .select('*')
-        .first()
+    const fee: Fee = await knex('fees')
+      .where('date', '=', date.toLocaleString())
+      .select('*')
+      .first()
 
-      if (fee) {
-        return response.status(400).json({ message: 'fee already exists' })
-      } else {
-        const [id] = await knex('fees')
-          .insert({
-            date,
-            value,
-            user_id: userId
-          })
-          .returning('id')
-
-        return response.status(201).json({ id })
-      }
+    if (fee) {
+      return response.status(400).json({ message: 'fee already exists' })
     } else {
-      return response.status(400).json({ message: 'no permission' })
+      const [id] = await knex('fees')
+        .insert({
+          date,
+          value,
+          user_id: userId
+        })
+        .returning('id')
+
+      return response.status(201).json({ id })
     }
   }
 
   async update (request: Request, response: Response) {
     const userId = Number(request.headers.user_id)
 
-    if (userId === 1) {
-      const { id } = request.params
-      const { date, value } = request.body
+    const { id } = request.params
+    const { date, value } = request.body
 
-      const fee: Fee = await knex('fees')
-        .where('id', id)
-        .select('*')
-        .first()
+    const fee: Fee = await knex('fees')
+      .where('id', id)
+      .select('*')
+      .first()
 
-      if (fee) {
-        const data: Fee = {
-          id: Number(id),
-          date: date || fee.date,
-          value: Number(value) || fee.value,
-          user_id: userId
-        }
-
-        await knex('fees')
-          .update(data)
-          .where('id', data.id)
-
-        return response.json({ id })
-      } else {
-        return response.status(404).json({ message: 'fee not found' })
+    if (fee) {
+      const data: Fee = {
+        id: Number(id),
+        date: date || fee.date,
+        value: Number(value) || fee.value,
+        user_id: userId
       }
+
+      await knex('fees')
+        .update(data)
+        .where('id', data.id)
+
+      return response.json({ id })
     } else {
-      return response.status(400).json({ message: 'no permission' })
+      return response.status(404).json({ message: 'fee not found' })
     }
   }
 }
