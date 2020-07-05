@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate'
 
 import middlewareAuth from './middleware/auth'
 
+import AuthController from '@controllers/AuthController'
 import UserController from '@controllers/UserController'
 import MemberController from '@controllers/MemberController'
 import FeeController from '@controllers/FeeController'
@@ -10,12 +11,21 @@ import PaymentController from '@controllers/PaymentController'
 
 const routes = express.Router()
 
-routes.use(middlewareAuth)
-
+const authController = new AuthController()
 const userController = new UserController()
 const memberController = new MemberController()
 const feeController = new FeeController()
 const paymentController = new PaymentController()
+
+routes.post('/users/signin',
+  celebrate({
+    body: Joi.object().keys({
+      username: Joi.string().required(),
+      password: Joi.string().required()
+    })
+  }, { abortEarly: false }),
+  authController.signin
+)
 
 routes.get('/users',
   celebrate({
@@ -26,6 +36,7 @@ routes.get('/users',
       username: Joi.string()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   userController.index
 )
 
@@ -38,6 +49,7 @@ routes.get('/users/:id',
       id: Joi.number()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   userController.show
 )
 
@@ -51,6 +63,7 @@ routes.post('/users',
       password: Joi.string().required()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   userController.create
 )
 
@@ -64,6 +77,7 @@ routes.get('/members',
       description: Joi.string()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   memberController.index
 )
 
@@ -76,6 +90,7 @@ routes.get('/members/:id',
       id: Joi.number()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   memberController.show
 )
 
@@ -93,6 +108,7 @@ routes.post('/members',
       state: Joi.string().required()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   memberController.create
 )
 
@@ -113,6 +129,7 @@ routes.put('/members/:id',
       state: Joi.string()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   memberController.update
 )
 
@@ -137,6 +154,7 @@ routes.get('/fees/:id',
       id: Joi.number()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   feeController.show
 )
 
@@ -150,6 +168,7 @@ routes.post('/fees',
       value: Joi.number().required()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   feeController.create
 )
 
@@ -166,6 +185,7 @@ routes.put('/fees/:id',
       value: Joi.number()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   feeController.update
 )
 
@@ -179,6 +199,7 @@ routes.get('/payments',
       member_id: Joi.number()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   paymentController.index
 )
 
@@ -191,6 +212,7 @@ routes.get('/payments/:id',
       id: Joi.number()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   paymentController.show
 )
 
@@ -205,6 +227,7 @@ routes.post('/payments',
       fee_id: Joi.number().required()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   paymentController.create
 )
 
@@ -221,6 +244,7 @@ routes.put('/payments/:id',
       fee_id: Joi.number()
     })
   }, { abortEarly: false }),
+  [middlewareAuth],
   paymentController.update
 )
 
