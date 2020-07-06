@@ -4,13 +4,13 @@ import connection from '@database/connection'
 
 let token: String
 
-describe('Users', () => {
+describe('Payments', () => {
   beforeEach(async () => {
     const responseSignin = await request(app)
       .post('/signin')
       .send({
-        username: 'admin',
-        password: 'admin'
+        username: 'user',
+        password: 'password'
       })
 
     token = 'Bearer ' + responseSignin.body.token
@@ -20,13 +20,14 @@ describe('Users', () => {
     connection.destroy()
   })
 
-  it('should create a new user', async () => {
+  it('should create a new payment', async () => {
     const response = await request(app)
-      .post('/users')
+      .post('/payments')
       .set('Authorization', token)
       .send({
-        username: 'tom',
-        password: 'mot321'
+        date: '2020-06-01',
+        member_id: 1,
+        fee_id: 1
       })
 
     expect(response.statusCode).toBe(201)
@@ -34,9 +35,9 @@ describe('Users', () => {
     expect(response.body).toHaveProperty('id')
   })
 
-  it('should list all users', async () => {
+  it('should list all payments', async () => {
     const response = await request(app)
-      .get('/users')
+      .get('/payments')
       .set('Authorization', token)
       .send()
 
@@ -45,19 +46,17 @@ describe('Users', () => {
     expect(response.body).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: 1 }),
-        expect.objectContaining({ username: 'admin' }),
-        expect.objectContaining({ id: 2 }),
-        expect.objectContaining({ username: 'user' }),
-        expect.objectContaining({ id: 3 }),
-        expect.objectContaining({ username: 'tom' })
+        expect.objectContaining({ date: '2020-06-01' }),
+        expect.objectContaining({ fee_id: 1 }),
+        expect.objectContaining({ user_id: 2 })
       ])
     )
   })
 
-  it('should list users with username match', async () => {
+  it('should list payments with date match', async () => {
     const response = await request(app)
-      .get('/users')
-      .query({ username: 'tom' })
+      .get('/payments')
+      .query({ date: '2020-06-01' })
       .set('Authorization', token)
       .send()
 
@@ -65,21 +64,25 @@ describe('Users', () => {
     expect(response.type).toBe('application/json')
     expect(response.body).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: 3 }),
-        expect.objectContaining({ username: 'tom' })
+        expect.objectContaining({ id: 1 }),
+        expect.objectContaining({ date: '2020-06-01' }),
+        expect.objectContaining({ fee_id: 1 }),
+        expect.objectContaining({ user_id: 2 })
       ])
     )
   })
 
-  it('should list user with specific id', async () => {
+  it('should list payments with specific id', async () => {
     const response = await request(app)
-      .get('/users/3')
+      .get('/payments/1')
       .set('Authorization', token)
       .send()
 
     expect(response.statusCode).toBe(200)
     expect(response.type).toBe('application/json')
-    expect(response.body).toEqual(expect.objectContaining({ id: 3 }))
-    expect(response.body).toEqual(expect.objectContaining({ username: 'tom' }))
+    expect(response.body).toEqual(expect.objectContaining({ id: 1 }))
+    expect(response.body).toEqual(expect.objectContaining({ date: '2020-06-01' }))
+    expect(response.body).toEqual(expect.objectContaining({ fee_id: 1 }))
+    expect(response.body).toEqual(expect.objectContaining({ user_id: 2 }))
   })
 })

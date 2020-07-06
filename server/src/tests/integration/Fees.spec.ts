@@ -4,13 +4,13 @@ import connection from '@database/connection'
 
 let token: String
 
-describe('Members', () => {
+describe('Fees', () => {
   beforeEach(async () => {
     const responseSignin = await request(app)
       .post('/signin')
       .send({
-        username: 'user',
-        password: 'password'
+        username: 'admin',
+        password: 'admin'
       })
 
     token = 'Bearer ' + responseSignin.body.token
@@ -20,17 +20,13 @@ describe('Members', () => {
     connection.destroy()
   })
 
-  it('should create a new member', async () => {
+  it('should create a new fee', async () => {
     const response = await request(app)
-      .post('/members')
+      .post('/fees')
       .set('Authorization', token)
       .send({
-        name: 'Joe',
-        address: 'Paris',
-        phone: 1234567890,
-        email: 'joe@mail.com',
-        description: 'Special One',
-        state: 'active'
+        date: '2020-06-01',
+        value: 5
       })
 
     expect(response.statusCode).toBe(201)
@@ -38,13 +34,13 @@ describe('Members', () => {
     expect(response.body).toHaveProperty('id')
   })
 
-  it('should update a member', async () => {
+  it('should update a fee', async () => {
     const response = await request(app)
-      .put('/members/1')
+      .put('/fees/1')
       .set('Authorization', token)
       .send({
-        description: 'Special Two',
-        state: 'inactive'
+        date: '2020-01-01',
+        value: 10
       })
 
     expect(response.statusCode).toBe(200)
@@ -52,9 +48,9 @@ describe('Members', () => {
     expect(response.body).toHaveProperty('id')
   })
 
-  it('should list all members', async () => {
+  it('should list all fees', async () => {
     const response = await request(app)
-      .get('/members')
+      .get('/fees')
       .set('Authorization', token)
       .send()
 
@@ -63,15 +59,17 @@ describe('Members', () => {
     expect(response.body).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: 1 }),
-        expect.objectContaining({ name: 'Joe' })
+        expect.objectContaining({ date: '2020-01-01' }),
+        expect.objectContaining({ value: 10 }),
+        expect.objectContaining({ user_id: 1 })
       ])
     )
   })
 
-  it('should list members with name match', async () => {
+  it('should list fees with date match', async () => {
     const response = await request(app)
-      .get('/members')
-      .query({ name: 'Joe' })
+      .get('/fees')
+      .query({ date: '2020-01-01' })
       .set('Authorization', token)
       .send()
 
@@ -80,32 +78,24 @@ describe('Members', () => {
     expect(response.body).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: 1 }),
-        expect.objectContaining({ name: 'Joe' }),
-        expect.objectContaining({ address: 'Paris' }),
-        expect.objectContaining({ phone: 1234567890 }),
-        expect.objectContaining({ email: 'joe@mail.com' }),
-        expect.objectContaining({ description: 'Special Two' }),
-        expect.objectContaining({ state: 'inactive' }),
-        expect.objectContaining({ user_id: 2 })
+        expect.objectContaining({ date: '2020-01-01' }),
+        expect.objectContaining({ value: 10 }),
+        expect.objectContaining({ user_id: 1 })
       ])
     )
   })
 
-  it('should list member with specific id', async () => {
+  it('should list fees with specific id', async () => {
     const response = await request(app)
-      .get('/members/1')
+      .get('/fees/1')
       .set('Authorization', token)
       .send()
 
     expect(response.statusCode).toBe(200)
     expect(response.type).toBe('application/json')
     expect(response.body).toEqual(expect.objectContaining({ id: 1 }))
-    expect(response.body).toEqual(expect.objectContaining({ name: 'Joe' }))
-    expect(response.body).toEqual(expect.objectContaining({ address: 'Paris' }))
-    expect(response.body).toEqual(expect.objectContaining({ phone: 1234567890 }))
-    expect(response.body).toEqual(expect.objectContaining({ email: 'joe@mail.com' }))
-    expect(response.body).toEqual(expect.objectContaining({ description: 'Special Two' }))
-    expect(response.body).toEqual(expect.objectContaining({ state: 'inactive' }))
-    expect(response.body).toEqual(expect.objectContaining({ user_id: 2 }))
+    expect(response.body).toEqual(expect.objectContaining({ date: '2020-01-01' }))
+    expect(response.body).toEqual(expect.objectContaining({ value: 10 }))
+    expect(response.body).toEqual(expect.objectContaining({ user_id: 1 }))
   })
 })
