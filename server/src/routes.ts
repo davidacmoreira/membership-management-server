@@ -18,7 +18,7 @@ const memberController = new MemberController()
 const feeController = new FeeController()
 const paymentController = new PaymentController()
 
-routes.post('/users/signin',
+routes.post('/signin',
   celebrate({
     body: Joi.object().keys({
       username: Joi.string().required(),
