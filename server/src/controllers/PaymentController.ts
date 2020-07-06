@@ -35,9 +35,15 @@ class PaymentController {
 
     if (payments.length) {
       const resultPayments = payments.map(payment => {
+        const paymentDate = new Date(payment.date)
+        const dateString =
+          paymentDate.getUTCFullYear() + '-' +
+          (paymentDate.getUTCMonth() + 1).toLocaleString().padStart(2, '0') + '-' +
+          paymentDate.getUTCDate().toLocaleString().padStart(2, '0')
+
         return {
           id: payment.id,
-          date: payment.date.toLocaleDateString(),
+          date: dateString,
           member_id: payment.member_id,
           fee_id: payment.fee_id,
           user_id: payment.user_id
@@ -59,9 +65,15 @@ class PaymentController {
       .first()
 
     if (payment) {
+      const paymentDate = new Date(payment.date)
+      const dateString =
+        paymentDate.getUTCFullYear() + '-' +
+        (paymentDate.getUTCMonth() + 1).toLocaleString().padStart(2, '0') + '-' +
+        paymentDate.getUTCDate().toLocaleString().padStart(2, '0')
+
       const resultPayment = {
         id: payment.id,
-        date: payment.date.toLocaleDateString(),
+        date: dateString,
         member_id: payment.member_id,
         fee_id: payment.fee_id,
         user_id: payment.user_id
@@ -90,7 +102,7 @@ class PaymentController {
     } else {
       const [id] = await knex('payments')
         .insert({
-          date,
+          date: date.toLocaleString(),
           member_id: memberId,
           fee_id: feeId,
           user_id: userId
@@ -113,9 +125,15 @@ class PaymentController {
       .first()
 
     if (payment) {
+      const paymentDate = new Date(payment.date)
+      const dateString =
+        paymentDate.getUTCFullYear() + '-' +
+        (paymentDate.getUTCMonth() + 1).toLocaleString().padStart(2, '0') + '-' +
+        paymentDate.getUTCDate().toLocaleString().padStart(2, '0')
+
       const data: Payment = {
         id: id,
-        date: date || payment.date,
+        date: date.toLocaleString() || dateString,
         member_id: payment.member_id,
         fee_id: feeId || payment.fee_id,
         user_id: userId

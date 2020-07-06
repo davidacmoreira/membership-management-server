@@ -27,9 +27,15 @@ class FeeController {
 
     if (fees.length) {
       const resultFees = fees.map(fee => {
+        const feeDate = new Date(fee.date)
+        const dateString =
+          feeDate.getUTCFullYear() + '-' +
+          (feeDate.getUTCMonth() + 1).toLocaleString().padStart(2, '0') + '-' +
+          feeDate.getUTCDate().toLocaleString().padStart(2, '0')
+
         return {
           id: fee.id,
-          date: fee.date.toLocaleDateString(),
+          date: dateString,
           value: fee.value,
           user_id: fee.user_id
         }
@@ -50,9 +56,15 @@ class FeeController {
       .first()
 
     if (fee) {
+      const feeDate = new Date(fee.date)
+      const dateString =
+        feeDate.getUTCFullYear() + '-' +
+        (feeDate.getUTCMonth() + 1).toLocaleString().padStart(2, '0') + '-' +
+        feeDate.getUTCDate().toLocaleString().padStart(2, '0')
+
       const resultFee = {
         id: fee.id,
-        date: fee.date.toLocaleDateString(),
+        date: dateString,
         value: fee.value,
         user_id: fee.user_id
       }
@@ -66,9 +78,7 @@ class FeeController {
   async create (request: Request, response: Response) {
     const userId = Number(request.headers.user_id)
 
-    const {
-      date, value
-    } = request.body
+    const { date, value } = request.body
 
     const fee: Fee = await knex('fees')
       .where('date', '=', date.toLocaleString())
@@ -80,7 +90,7 @@ class FeeController {
     } else {
       const [id] = await knex('fees')
         .insert({
-          date,
+          date: date.toLocaleString(),
           value,
           user_id: userId
         })
@@ -104,7 +114,7 @@ class FeeController {
     if (fee) {
       const data: Fee = {
         id: Number(id),
-        date: date || fee.date,
+        date: date.toLocaleString() || fee.date.toLocaleString(),
         value: Number(value) || fee.value,
         user_id: userId
       }
