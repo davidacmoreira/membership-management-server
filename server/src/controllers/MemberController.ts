@@ -65,7 +65,7 @@ class MemberController {
 
     const [id] = await knex('members').insert(member).returning('id')
 
-    return response.json({ id })
+    return response.status(201).json({ id })
   }
 
   async update (request: Request, response: Response) {
