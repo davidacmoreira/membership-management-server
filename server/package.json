@@ -8,9 +8,10 @@
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "start": "node dist/server.js",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpileOnly --ignore-watch --no-notify src/server.ts",
-    "pretest": "cross-env NODE_ENV=test npx knex --knexfile knexfile.ts migrate:rollback --all && cross-env NODE_ENV=test npx knex --knexfile knexfile.ts migrate:latest",
+    "pretest": "cross-env NODE_ENV=test npx knex --knexfile knexfile.ts migrate:rollback --all && cross-env NODE_ENV=test npx knex --knexfile knexfile.ts migrate:latest && cross-env NODE_ENV=test npx knex --knexfile knexfile.ts seed:run",
     "test": "cross-env NODE_ENV=test jest --testTimeout=5000",
     "knex:migrate": "npx knex --knexfile knexfile.ts migrate:latest",
+    "knex:seed": "npx knex --knexfile knexfile.ts seed:run",
     "knex:rollback": "npx knex --knexfile knexfile.ts migrate:rollback --all"
   },
   "dependencies": {
