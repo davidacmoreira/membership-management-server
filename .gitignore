@@ -1,7 +1,9 @@
-server/node_modules
-server/yarn-debug.log*
-server/yarn-error.log*
-server/dist
-server/src/database/*.sqlite
+dist
+
+node_modules
+yarn-debug.log*
+yarn-error.log*
+
+*.sqlite
 
 *.env*
