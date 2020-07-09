@@ -17,21 +17,46 @@ interface Member {
 
 class MemberController {
   async index (request: Request, response: Response) {
-    const { name, description } = request.query
+    const { name, description, state, fee } = request.query
 
-    const members: Member[] = await knex('members')
-      .select('*')
-      .modify((queryBuilder) => {
-        if (name) {
-          queryBuilder.where('name', 'like', '%' + String(name) + '%')
-        }
+    let query = 'SELECT DISTINCT members."id", members."name", members."address", members."phone", members."email", members."description", members."state", members."user_id" FROM members'
 
-        if (description) {
-          queryBuilder.where('description', 'like', '%' + String(description) + '%')
-        }
+    let where = false
 
-        return queryBuilder
-      })
+    if (fee) {
+      const subQuery = `NOT exists (select payments."id" from payments where payments."fee_id" = (select fees."id" from fees where fees."date" = '${fee.toLocaleString()}') and payments."member_id" = members."id")`
+      const link = (where) ? ' AND ' : ' WHERE '
+
+      query = query + link + subQuery
+      where = true
+    }
+
+    if (state) {
+      const subQuery = `members.state = '${state}'`
+      const link = (where) ? ' AND ' : ' WHERE '
+
+      query = query + link + subQuery
+      where = true
+    }
+
+    if (description) {
+      const subQuery = `members.description like '%${description}%'`
+      const link = (where) ? ' AND ' : ' WHERE '
+
+      query = query + link + subQuery
+      where = true
+    }
+
+    if (name) {
+      const subQuery = `members.name like '%${name}%'`
+      const link = (where) ? ' AND ' : ' WHERE '
+
+      query = query + link + subQuery
+      where = true
+    }
+
+    const rawQuery = await knex.raw(query)
+    const members: Member[] = rawQuery.rows
 
     if (members.length) {
       return response.json(members)
