@@ -75,7 +75,9 @@ routes.get('/members',
     }).unknown(),
     query: Joi.object().keys({
       name: Joi.string(),
-      description: Joi.string()
+      description: Joi.string(),
+      state: Joi.string().valid('active', 'inactive'),
+      fee: Joi.date()
     })
   }, { abortEarly: false }),
   [middlewareAuth],
@@ -106,7 +108,7 @@ routes.post('/members',
       phone: Joi.number(),
       email: Joi.string().email(),
       description: Joi.string(),
-      state: Joi.string().required()
+      state: Joi.string().required().valid('active', 'inactive')
     })
   }, { abortEarly: false }),
   [middlewareAuth],
@@ -127,7 +129,7 @@ routes.put('/members/:id',
       phone: Joi.number(),
       email: Joi.string().email(),
       description: Joi.string(),
-      state: Joi.string()
+      state: Joi.string().valid('active', 'inactive')
     })
   }, { abortEarly: false }),
   [middlewareAuth],
