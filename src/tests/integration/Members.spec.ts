@@ -30,7 +30,7 @@ describe('Members', () => {
         phone: 1234567890,
         email: 'joe@mail.com',
         description: 'Special One',
-        state: 'active'
+        state: 'inactive'
       })
 
     expect(response.statusCode).toBe(201)
@@ -44,7 +44,7 @@ describe('Members', () => {
       .set('Authorization', token)
       .send({
         description: 'Special Two',
-        state: 'inactive'
+        state: 'active'
       })
 
     expect(response.statusCode).toBe(200)
@@ -63,7 +63,13 @@ describe('Members', () => {
     expect(response.body).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: 1 }),
-        expect.objectContaining({ name: 'Joe' })
+        expect.objectContaining({ name: 'Joe' }),
+        expect.objectContaining({ address: 'Paris' }),
+        expect.objectContaining({ phone: 1234567890 }),
+        expect.objectContaining({ email: 'joe@mail.com' }),
+        expect.objectContaining({ description: 'Special Two' }),
+        expect.objectContaining({ state: 'active' }),
+        expect.objectContaining({ user_id: 2 })
       ])
     )
   })
@@ -85,7 +91,33 @@ describe('Members', () => {
         expect.objectContaining({ phone: 1234567890 }),
         expect.objectContaining({ email: 'joe@mail.com' }),
         expect.objectContaining({ description: 'Special Two' }),
-        expect.objectContaining({ state: 'inactive' }),
+        expect.objectContaining({ state: 'active' }),
+        expect.objectContaining({ user_id: 2 })
+      ])
+    )
+  })
+
+  it('should list active members without a specific fee', async () => {
+    const response = await request(app)
+      .get('/members')
+      .query({
+        state: 'active',
+        fee: '2021-01-01'
+      })
+      .set('Authorization', token)
+      .send()
+
+    expect(response.statusCode).toBe(200)
+    expect(response.type).toBe('application/json')
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 1 }),
+        expect.objectContaining({ name: 'Joe' }),
+        expect.objectContaining({ address: 'Paris' }),
+        expect.objectContaining({ phone: 1234567890 }),
+        expect.objectContaining({ email: 'joe@mail.com' }),
+        expect.objectContaining({ description: 'Special Two' }),
+        expect.objectContaining({ state: 'active' }),
         expect.objectContaining({ user_id: 2 })
       ])
     )
@@ -105,7 +137,7 @@ describe('Members', () => {
     expect(response.body).toEqual(expect.objectContaining({ phone: 1234567890 }))
     expect(response.body).toEqual(expect.objectContaining({ email: 'joe@mail.com' }))
     expect(response.body).toEqual(expect.objectContaining({ description: 'Special Two' }))
-    expect(response.body).toEqual(expect.objectContaining({ state: 'inactive' }))
+    expect(response.body).toEqual(expect.objectContaining({ state: 'active' }))
     expect(response.body).toEqual(expect.objectContaining({ user_id: 2 }))
   })
 })
