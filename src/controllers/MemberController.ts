@@ -56,9 +56,19 @@ class MemberController {
     }
 
     const rawQuery = await knex.raw(query)
-    const members: Member[] = rawQuery.rows
 
-    if (members.length) {
+    let members: Member[]
+    let sizeMembers: Number
+
+    try {
+      members = rawQuery.rows
+      sizeMembers = members.length
+    } catch (e) {
+      members = rawQuery
+      sizeMembers = members.length
+    }
+
+    if (sizeMembers) {
       return response.json(members)
     } else {
       return response.status(204).json()
