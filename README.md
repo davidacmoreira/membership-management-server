@@ -5,7 +5,7 @@
 
 ### Node.js
 
-Install the latest stable version (LTS - Long Term Support) of [**Node.js**](https://www.nodejs.org/en/download/package-manager/).
+Install the latest stable version (LTS - Long Term Support) of [**Node.js**](https://nodejs.org/en/download/package-manager/).
 
 Execute the command `node -v` to check if is already installed.
 
